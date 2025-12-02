@@ -83,12 +83,11 @@
       color: var(--mario-coin);
     }
 
-    /* Typing effect */
+    /* Typing effect - removed blinking cursor */
     .typing::after {
       content: "_"; /* Pixelated cursor */
-      animation: blink 1s step-start infinite;
+      color: transparent; /* Hide the cursor */
     }
-    @keyframes blink { 50% { opacity: 0; } }
 
     /* Mario Button */
     .btn-mario {
@@ -271,6 +270,37 @@
         transform: translateY(-5px);
     }
 
+    /* Mute Button */
+    #muteButton {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background-color: var(--mario-red);
+      border: 4px solid #A00000;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.4);
+      transition: all 0.1s ease-in-out;
+      z-index: 999;
+      color: white;
+      text-shadow: 1px 1px 0px #000;
+    }
+    #muteButton:hover {
+      transform: scale(1.1);
+      box-shadow: 8px 8px 0px rgba(0, 0, 0, 0.4);
+    }
+    #muteButton:active {
+      transform: scale(0.95);
+      border-bottom-width: 2px;
+      box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.4);
+    }
+
     /* Footer */
     footer {
       background-color: var(--mario-brown);
@@ -279,6 +309,81 @@
       text-shadow: 1px 1px 0px #000;
       font-family: 'VT323', monospace;
       font-size: 0.9rem;
+    }
+
+    /* Welcome Popup Modal */
+    .welcome-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .welcome-modal.hidden {
+      display: none;
+    }
+    .welcome-content {
+      background: linear-gradient(135deg, var(--mario-sky) 0%, var(--mario-blue) 100%);
+      border: 8px solid var(--mario-brown);
+      border-radius: 2rem;
+      padding: 3rem;
+      max-width: 500px;
+      text-align: center;
+      box-shadow: 16px 16px 0px rgba(0, 0, 0, 0.6);
+      animation: popIn 0.5s ease-out;
+    }
+    @keyframes popIn {
+      0% {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    .welcome-title {
+      font-family: 'Press Start 2P', cursive;
+      font-size: 2rem;
+      color: var(--mario-red);
+      text-shadow: 3px 3px 0px #000;
+      margin-bottom: 1rem;
+      animation: pulse 1s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    .welcome-text {
+      font-family: 'VT323', monospace;
+      font-size: 1.2rem;
+      color: #FFF;
+      text-shadow: 2px 2px 0px #000;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    .welcome-button {
+      background-color: var(--mario-green);
+      color: white;
+      padding: 1rem 2rem;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 1rem;
+      border: 4px solid #005000;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.4);
+      transition: all 0.1s ease-in-out;
+      text-shadow: 1px 1px 0px #000;
+    }
+    .welcome-button:hover {
+      transform: translateY(2px);
+      border-bottom-width: 2px;
+      box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
     }
 
     /* Responsive Adjustments */
@@ -300,6 +405,19 @@
   </style>
 </head>
 <body class="selection:bg-mario-red selection:text-white">
+
+  <!-- Welcome Modal -->
+  <div id="welcomeModal" class="welcome-modal">
+    <div class="welcome-content">
+      <h1 class="welcome-title">Welcome!</h1>
+      <p class="welcome-text">Welcome to Mario Prasetio World!</p>
+      <p class="welcome-text">Press Enter or click below to continue your adventure...</p>
+      <button id="welcomeButton" class="welcome-button">Let's Go! 🚀</button>
+    </div>
+  </div>
+
+  <!-- Mute Button -->
+  <button id="muteButton" title="Mute/Unmute Music">🔊</button>
 
   <!-- Navbar -->
   <nav class="fixed top-0 left-0 right-0 z-50 py-3">
@@ -596,7 +714,7 @@
             <span class="project-tag">SIMAKSI</span>
           </div>
           <div class="flex justify-start gap-4 mt-5">
-            <a href="#" target="_blank" class="project-link">Explore the World &rarr;</a>
+            <!-- <a href="#" target="_blank" class="project-link">Explore the World &rarr;</a> -->
           </div>
         </div>
 
@@ -630,53 +748,63 @@
         </button>
       </form> -->
 
-      <div class="flex justify-center gap-8 mt-12">
-        <a href="https://linkedin.com/in/marioprasetio" target="_blank" class="text-5xl social-icon" aria-label="LinkedIn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-linkedin" viewBox="0 0 16 16">
-            <!-- <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542V13.394h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025H8.5V6.169h2.401V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025H8.5V6.169h2.401V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025H8.5V6.169h2.401V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h</path> -->
-          </svg>
-        </a>
-        <a href="https://github.com/Mario-Prasetio" target="_blank" class="text-5xl social-icon" aria-label="GitHub">
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
-            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.43-.41-2.43-.8-.35-.7-.8-.94-.8-.94-.6-.5-.1-.4-.1-.4.47.03.75.47.75.47.43.75 1.12.53 1.39.4.07-.4.28-.7.54-.8.46-.05.9-.12 1.36-.01.07-.12.2-.26.34-.41-.3-.07-.6-.11-.92-.11-1.66 0-3 1.12-3 2.5 0 .54.19 1.05.52 1.42-.05.13-.2.52-.08.82 0 0 .4-.13.82-.47.34.09.7.14 1.07.14.37 0 .73-.05 1.07-.14.42.34.82.47.82.47.12-.3.0-.69-.08-.82.33-.37.52-.88.52-1.42 0-1.38-1.34-2.5-3-2.5z"/>
-          </svg>
-        </a>
-        <a href="mailto:mario.prasetio.nugroho@gmail.com" class="text-5xl social-icon" aria-label="Email">
-          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-envelope-fill" viewBox="0 0 16 16">
-            <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.146.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83L0 13.256V14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-.748L9.239 8.83l-1.218.733-1.218-.733zM16 4.697v7.104l-5.803-3.558L16 4.697z"/>
-          </svg>
-        </a>
-      </div>
     </div>
   </section>
 
   <!-- Footer -->
   <footer class="text-center py-6">
-    © 2025 Mario Prasetio · Built with ❤️ and the spirit of the Mushroom Kingdom!
+    <p class="mb-4">© 2025 Mario Prasetio · Built with ❤️ and the spirit of the Mushroom Kingdom!</p>
+    <div class="flex justify-center gap-6 text-sm">
+      <a href="mailto:mario.prasetio.nugroho@gmail.com" class="text-mario-coin hover:text-white transition">📧 Email</a>
+      <a href="https://linkedin.com/in/MarioPrasetioN" target="_blank" class="text-mario-coin hover:text-white transition">💼 LinkedIn</a>
+    </div>
   </footer>
 
-    <audio id="mario-theme-audio" loop autoplay style="display:none;">
+    <audio id="mario-theme-audio" loop style="display:none;">
     <source src="./Super Mario Bros. medley.mp3" type="audio/mpeg">
     Your browser does not support the audio element.
   </audio>
 
   <!-- Typing Effect Script -->
   <script>
-    // Optional: You might want to control the audio playback (e.g., mute button)
-    // For now, it will autoplay. Some browsers might have restrictions on autoplay,
-    // especially if the user hasn't interacted with the page before.
-    document.addEventListener('DOMContentLoaded', () => {
-        const audio = document.getElementById('mario-theme-audio');
-        // Attempt to play audio
-        audio.play().catch(error => {
-            // Autoplay was prevented. User might need to interact first.
-            console.log("Audio autoplay prevented:", error);
-            // You could add a visible play button here if autoplay fails
-        });
+    // Welcome Modal and Audio Control
+    const welcomeModal = document.getElementById('welcomeModal');
+    const welcomeButton = document.getElementById('welcomeButton');
+    const audio = document.getElementById('mario-theme-audio');
+    const muteButton = document.getElementById('muteButton');
+    let isMuted = false;
+
+    function closeWelcomeModal() {
+      welcomeModal.classList.add('hidden');
+      audio.play().catch(error => {
+        console.log("Audio playback started:", error);
+      });
+    }
+
+    // Close modal on button click
+    welcomeButton.addEventListener('click', closeWelcomeModal);
+
+    // Close modal on Enter key press
+    document.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter' && !welcomeModal.classList.contains('hidden')) {
+        closeWelcomeModal();
+      }
+    });
+
+    // Mute Button Functionality
+    muteButton.addEventListener('click', () => {
+      isMuted = !isMuted;
+      if (isMuted) {
+        audio.pause();
+        muteButton.textContent = '🔇';
+      } else {
+        audio.play();
+        muteButton.textContent = '🔊';
+      }
     });
 
     // Your existing typing effect script would be here (if not already)
-    const roles = ["Full-Stack Developer", "AI & Automation Engineer", "Creative Problem Solver"];
+    const roles = ["Fullstack Engineer ", "Backend Heavy Engineer ", "AI & Automation Engineer ", "Creative Problem Solver "];
     let i = 0, j = 0, currentRole = "", isDeleting = false;
     const typingElement = document.getElementById("typing-text");
 
@@ -688,9 +816,10 @@
       }
       typingElement.textContent = currentRole;
 
-      let typeSpeed = isDeleting ? 50 : 120;
+      let typeSpeed = isDeleting ? 40 : 100;
       if (j === roles[i].length && !isDeleting) {
-          typeSpeed = 1500; /* Pause at end of word */
+          typeSpeed = 2000; /* Pause at end of word */
+          isDeleting = true;
       } else if (j === 0 && isDeleting) {
           isDeleting = false;
           i = (i + 1) % roles.length;
